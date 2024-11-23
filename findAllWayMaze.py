@@ -1,8 +1,15 @@
 from itertools import permutations
+import math as mt
 import random
 import os
 
-def permutaciones(s):
+def combination(n):
+    temp=1
+    for i in range(n,1,-1):
+        temp*=i
+    return temp
+
+def permutationCustom(s):
     s = list(s)
     s.sort()    
     print(''.join(s))
@@ -19,6 +26,7 @@ def permutaciones(s):
         s = s[:m + 1] + s[m + 1:][::-1]
         print(''.join(s))
 
+
 def greeadySearchWay(configOriginal):
     #Función para mostrar todos los posibles caminos de inicio a la meta
     """
@@ -34,17 +42,26 @@ def greeadySearchWay(configOriginal):
     Dado un punto de inicio (x0,y0) y un punto de meta (x1,y1):
     x (el número de movimientos hacia la derecha) = x1-x0
     y (el número de movimientos hacia arriba) = y1-y0
+
+    Para calcular las posibles combinaciones
     """
     # Calcular el número de movimientos hacia la derecha y hacia arriba
     x = int(configOriginal[5]) - int(configOriginal[2])
     y = int(configOriginal[4]) - int(configOriginal[3])
-    movimientos = ['d'] * abs(x) + ['i'] * abs(y)
-    
-    total=1
-    for i in range(len(movimientos),2,-1):
-        total*=i
+    movimientos = ['d'+ str(i+1) for i in range(abs(x))]+ ['i'+ str(j+1) for j in range(abs(y))] 
+
+    total= combination(len(movimientos))
     print(f"El numero total de posibles caminos es {total}, estos son:\n")
-    permutaciones(movimientos)
+    #permutationCustom(movimientos)
+    if int(configOriginal[6])==1:
+        permutations(movimientos)
+        verificado=mt.perm(len(movimientos),len(movimientos))
+        print(f"Verificaccion de  la libreria oficial\nPosibles caminos: {verificado}\n")
+        toPrint= permutations(movimientos)
+        cont=0
+        for perm in toPrint:
+            cont+=1
+            print(cont,": ",perm)
 
 def getChooseOrRandom(prompt, start, random_limit, text1, text2,remindConfig):
     choose = input(prompt)
@@ -101,7 +118,7 @@ def main():
             for line in archivo:
                 line = line.strip()
                 config.append(line)
-            if len(config) ==6:
+            if len(config) ==7:
                 maze =create_matrix(config[0],config[1])
                 maze[int(config[2])][int(config[3])]=1
                 maze[int(config[4])][int(config[5])]=2
